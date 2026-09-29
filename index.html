@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Post on X</title>
+<style>
+  :root { --bg: #ffffff; --fg: #0f1419; --muted: #536471; --card: #f7f9f9; --line: #eff3f4; --btn: #0f1419; --btn-fg: #ffffff; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #000000; --fg: #e7e9ea; --muted: #71767b; --card: #16181c; --line: #2f3336; --btn: #eff3f4; --btn-fg: #0f1419; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px 16px; background: var(--bg); color: var(--fg); font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 520px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 6px; }
+  p { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+  .tweet { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; white-space: pre-wrap; word-wrap: break-word; margin-bottom: 18px; }
+  a.btn, button.btn { display: block; width: 100%; text-align: center; padding: 14px; margin-bottom: 10px; border-radius: 999px; font-weight: 700; font-size: 16px; text-decoration: none; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+  a.primary { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+  .hint { font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Opening X…</h1>
+  <p>If X doesn't open, tap <b>Open in X app</b>. Check the account at the top of the composer before posting.</p>
+  <div class="tweet" id="tweet"></div>
+  <a class="btn primary" id="app" href="#">Open in X app</a>
+  <button class="btn" id="copy" type="button">Copy tweet</button>
+  <a class="btn" id="web" href="#">Post on x.com instead</a>
+  <p class="hint">The tweet text stays on your phone — it's in the part of the link after “#”, which browsers never send to any server.</p>
+</main>
+<script>
+  // The tweet arrives after "#" so it never leaves the phone.
+  var text = '';
+  try { text = decodeURIComponent(location.hash.slice(1)); } catch (e) { text = location.hash.slice(1); }
+  document.getElementById('tweet').textContent = text || '(no tweet text in this link)';
+  var appUrl = 'twitter://post?message=' + encodeURIComponent(text);
+  document.getElementById('app').href = appUrl;
+  document.getElementById('web').href = 'https://x.com/intent/post?text=' + encodeURIComponent(text);
+  document.getElementById('copy').onclick = function () {
+    var done = function () { document.getElementById('copy').textContent = 'Copied ✓'; };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {});
+  };
+  if (text) setTimeout(function () { location.href = appUrl; }, 150);
+</script>
+</body>
+</html>
